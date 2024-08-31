@@ -55,3 +55,16 @@ li{
   .dropdown-content a:hover {background-color: #ddd;}
   
   .dropdown.active .dropdown-content {display: block;}
+
+  .img, .checkbox {
+    display: none;
+    cursor: pointer;
+  }
+  
+  .visible {
+    display: inline-block;
+  }
+
+  .hasDatepicker{
+    width: 125px;
+  }

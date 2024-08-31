@@ -26,37 +26,27 @@
     -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>React App</title>
-    <script type = "text/javascript">
+  </head>
+  <body>
+    <script type = "text/javascript">  
       function removeActive() {
         var foo = document.querySelectorAll(".dropdown");
         for (var i = 0; i < foo.length; i++) {
           foo[i].classList.remove("active");
         }
       };
- 
+  
       document.addEventListener( 'click', (e) => {
-
+  
         const div = document.querySelectorAll('.dropdown');
-        const withinBoundaries = e.composedPath().includes(div[0]);
+        const withinBoundaries = e.composedPath().includes(div[0]) || e.composedPath().includes(div[1]) || e.composedPath().includes(div[2]) || e.composedPath().includes(div[3]);
       
         if ( ! withinBoundaries ) {
           removeActive();
         }
-      })
-    </script>
-  </head>
-  <body>
+      });
+    </script>   
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
   </body>
 </html>
