@@ -3,9 +3,18 @@ import PropTypes from 'prop-types';
 import DatePickerComponent from './DatePicker';
 import { changeEndTask } from '../actions/TaskActions';
 import { connect } from 'react-redux';
+import {Button, Collapse} from 'react-bootstrap'
 
 
-export class Grid extends React.Component {
+export class GridCollapse extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+          open: false
+        };
+      }
+
     handleClick = (event, i) => {
 
         let { changeEndTask } = this.props;
@@ -46,12 +55,19 @@ export class Grid extends React.Component {
         if(this.props.tasks != undefined){
             return (
                 <div className="container">
+               <Button className="btn" onClick={() => this.setState({ open: !this.state.open })}>
+                        Завершенные
+                 </Button>
+                
+                    <Collapse in={this.state.open}>   
+                    <div>
                 {this.props.tasks.map((task, i) => {  
                         let end = task.end?'checked':'';
                         let visible1 = task.end?'css-8s785g img checked':'css-8s785g img checked visible';
                         let visible2 = task.end?'css-8s785g img not-checked visible':'css-8s785g img not-checked';
                         let importance = task.importance?'checked':'';
-                        return (<div class="row" key={task.id}>
+                        return (
+                        <div class="row"  key={task.id}>
                             <div class="col" onClick = {(event) => this.handleClick(event, task.id)}>
                             <input checked={end} class="checkbox" type="checkbox" data-key = {task.id}></input>
                             <svg data-key = {task.id} class={visible1} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-testid="checkbox-icon">
@@ -78,8 +94,13 @@ export class Grid extends React.Component {
                             <svg  data-key = {task.id} class="css-8s785g img not-checked not-checked1 visible" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-testid="checkbox-icon">
                                         <path d="M9.1 2.9a1 1 0 011.8 0l1.93 3.91 4.31.63a1 1 0 01.56 1.7l-3.12 3.05.73 4.3a1 1 0 01-1.45 1.05L10 15.51l-3.86 2.03a1 1 0 01-1.45-1.05l.74-4.3L2.3 9.14a1 1 0 01.56-1.7l4.31-.63L9.1 2.9zm.9.44L8.07 7.25a1 1 0 01-.75.55L3 8.43l3.12 3.04a1 1 0 01.3.89l-.75 4.3 3.87-2.03a1 1 0 01.93 0l3.86 2.03-.74-4.3a1 1 0 01.29-.89L17 8.43l-4.32-.63a1 1 0 01-.75-.55L10 3.35z" fill="currentColor"></path>
                                     </svg></div>
-                            </div>) 
-                    })}
+                            </div>
+                            ) 
+                    }
+                    
+                    )}
+                    </div> 
+                </Collapse>   
                 </div>
             );
         }
@@ -97,4 +118,4 @@ const mapDispatchToProps = (dispatch) => {
   
   export default connect(
     mapDispatchToProps
-  )(Grid);
+  )(GridCollapse);

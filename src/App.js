@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './App.css';
-import {Button, Collapse} from 'react-bootstrap'
 import CurrentDate from './components/CurrentDate';
 import {AddTaskButton} from './components/AddTaskButton';
 import {Grid} from './components/Grid';
-import { addTask } from './actions/TaskActions';
+import {GridCollapse} from './components/GridCollapse';
+import { addTask, changeEndTask } from './actions/TaskActions';
 
 
 class App extends Component {
@@ -22,14 +22,23 @@ class App extends Component {
   }
   
   render() {
-    let { tasks, addTaskAction } = this.props;
+    let { tasks, addTaskAction, changeEndTaskAction } = this.props;
 
-    if(tasks.length == undefined){
+    if(tasks.tasks.lenght == undefined){
       if(localStorage.getItem('tasks') != null){
         tasks.tasks = JSON.parse(localStorage.getItem('tasks'));
+        if(localStorage.getItem('endTasks') != null){
+          tasks.endTasks = JSON.parse(localStorage.getItem('endTasks'));
+        }
+        else{
+          tasks.endTasks = null;
+        }
+        tasks.tasks = tasks.tasks.filter(function(el, index, arr){
+          if(el.end == 0)
+            return arr[index];
+        });
       }
     }
-
     return (
       <div class="container-fluid">
       <h1>TODO-лист</h1>
@@ -94,10 +103,12 @@ class App extends Component {
             </div>
             <Grid
               tasks={tasks.tasks}
+              changeEndTask={changeEndTaskAction}
             />
-            <Button className="btn" onClick={() => this.setState({ open: !this.state.open })}>
-               Завершенные
-           </Button>
+           <GridCollapse
+              tasks={tasks.endTasks}
+              changeEndTask={changeEndTaskAction}
+            />
           </div>
         </div>
         <div class="col  listItem-3">
@@ -119,11 +130,13 @@ class App extends Component {
 const mapStateToProps = (store) => {
   return {
     tasks: store.tasks,
+    endTasks: store.endTasks,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
     addTaskAction: (task) => dispatch(addTask(task)),
+    changeEndTaskAction: (id) => dispatch(changeEndTask(id)),
   };
 };
 
