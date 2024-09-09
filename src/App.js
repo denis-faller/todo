@@ -5,7 +5,7 @@ import CurrentDate from './components/CurrentDate';
 import {AddTaskButton} from './components/AddTaskButton';
 import {Grid} from './components/Grid';
 import {GridCollapse} from './components/GridCollapse';
-import { addTask, changeEndTask } from './actions/TaskActions';
+import { addTask, changeEndTask, changeImportanceTask } from './actions/TaskActions';
 
 
 class App extends Component {
@@ -22,7 +22,7 @@ class App extends Component {
   }
   
   render() {
-    let { tasks, addTaskAction, changeEndTaskAction } = this.props;
+    let { tasks, addTaskAction, changeEndTaskAction, changeImportanceTaskAction } = this.props;
 
     if(tasks.tasks.lenght == undefined){
       if(localStorage.getItem('tasks') != null){
@@ -104,10 +104,12 @@ class App extends Component {
             <Grid
               tasks={tasks.tasks}
               changeEndTask={changeEndTaskAction}
+              changeImportanceTask={changeImportanceTaskAction}
             />
            <GridCollapse
               tasks={tasks.endTasks}
               changeEndTask={changeEndTaskAction}
+              changeImportanceTask={changeImportanceTaskAction}
             />
           </div>
         </div>
@@ -137,6 +139,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     addTaskAction: (task) => dispatch(addTask(task)),
     changeEndTaskAction: (id) => dispatch(changeEndTask(id)),
+    changeImportanceTaskAction: (id) => dispatch(changeImportanceTask(id)),
   };
 };
 

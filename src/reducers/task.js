@@ -3,18 +3,22 @@
     TASK_ADD_FAIL,
     TASK_CHANGE_END_SUCCESS,
     TASK_CHANGE_END_FAIL,
+    TASK_CHANGE_IMPORTANCE_SUCCESS,
+    TASK_CHANGE_IMPORTANCE_FAIL,
   } from '../actions/TaskActions';
   
   export const initialState = {
     tasks: [],
     endTasks: [],
-    id: 0,
+    id: Number(localStorage.getItem('taskId')) || 0,
   };
   
   export function taskReducer(state = initialState, action) {
+
     let tasks = state.tasks;
     let endTasks = state.endTasks;
     state.id += 1;
+    localStorage.setItem('taskId', state.id);
 
     switch (action.type) {
       case TASK_ADD_SUCCESS:
@@ -49,7 +53,7 @@
           let tempTasks = [];
 
           if(localStorage.getItem('endTasks') != null){
-            endTasks =  JSON.parse(localStorage.getItem('endTasks'));
+            endTasks = JSON.parse(localStorage.getItem('endTasks'));
             if(endTasks != undefined){
                 endTasks = endTasks.map(function(element, index, array) {
                 if(array[index].id === action.payload){
@@ -124,6 +128,48 @@
           alert('Ошибка при редактировании задачи');
           return {
           };
+      
+          case TASK_CHANGE_IMPORTANCE_SUCCESS:
+            tasks = tasks.map(function(element, index, array) {
+              if(array[index].id === action.payload){
+                if(array[index].importance){
+                  array[index].importance = false;
+                }
+                else{
+                  array[index].importance = true;
+                }
+              }
+              return array[index];
+            });
+          
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+
+
+            endTasks = JSON.parse(localStorage.getItem('endTasks'));
+            endTasks = endTasks.map(function(element, index, array) {
+              if(array[index].id === action.payload){
+                if(array[index].importance){
+                  array[index].importance = false;
+                }
+                else{
+                  array[index].importance = true;
+                }
+              }
+              return array[index];
+            });
+          
+            localStorage.setItem('endTasks', JSON.stringify(endTasks));
+
+  
+            return {
+              ...state,
+              tasks: tasks,
+            };
+      
+          case TASK_CHANGE_IMPORTANCE_FAIL:
+            alert('Ошибка при редактировании задачи');
+            return {
+            };
   
       default:
         return state;
