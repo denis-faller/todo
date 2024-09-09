@@ -145,20 +145,22 @@
             localStorage.setItem('tasks', JSON.stringify(tasks));
 
 
-            endTasks = JSON.parse(localStorage.getItem('endTasks'));
-            endTasks = endTasks.map(function(element, index, array) {
-              if(array[index].id === action.payload){
-                if(array[index].importance){
-                  array[index].importance = false;
+            if(localStorage.getItem('endTasks') != undefined){
+              endTasks = JSON.parse(localStorage.getItem('endTasks'));
+              endTasks = endTasks.map(function(element, index, array) {
+                if(array[index].id === action.payload){
+                  if(array[index].importance){
+                    array[index].importance = false;
+                  }
+                  else{
+                    array[index].importance = true;
+                  }
                 }
-                else{
-                  array[index].importance = true;
-                }
-              }
-              return array[index];
-            });
-          
-            localStorage.setItem('endTasks', JSON.stringify(endTasks));
+                return array[index];
+              });
+            
+              localStorage.setItem('endTasks', JSON.stringify(endTasks));
+          }
 
   
             return {

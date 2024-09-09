@@ -13,7 +13,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false
+      importance: false,
     };
   }
 
@@ -39,17 +39,30 @@ class App extends Component {
         });
       }
     }
+    
+    let importance = this.state.importance;
+    tasks.tasks = tasks.tasks.filter(function(el, index, arr){
+      if(importance){
+        if(el.importance == importance){
+          return arr[index];
+        }
+      }
+      else{
+        return arr[index];
+      }
+    });
+
     return (
       <div class="container-fluid">
       <h1>TODO-лист</h1>
       <div class="row">
         <div class="col listItem-1">
           <ul>
-            <li class = "listItem-inner-1">
-              Мой день  
+            <li class = "listItem-inner-1 my-day" onClick={(event) => this.setState({ importance: false })}>
+              Мой день
             </li>
-            <li class = "listItem-inner-2">
-              Важно  
+            <li class = "listItem-inner-2 importance" onClick={(event) => this.setState({ importance: true })}>
+              Важно
             </li>
           </ul>
         </div>
