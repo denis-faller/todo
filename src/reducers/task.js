@@ -23,7 +23,7 @@
     switch (action.type) {
       case TASK_ADD_SUCCESS:
         if(action.payload != undefined){
-          tasks.push({id: state.id, end: false, name: action.payload, date: '', importance: false});
+          tasks.push({id: state.id, end: false, name: action.payload, date: '', importance: false, dateCreate: new Date()});
           localStorage.setItem('tasks', JSON.stringify(tasks));
         }
         return {

@@ -14,8 +14,11 @@ class App extends Component {
     super(props);
     this.state = {
       importance: false,
+      sort: '',
+      resort: '',
     };
   }
+
 
   handleClick = (e) => {
     e.currentTarget.classList.add("active");
@@ -51,6 +54,70 @@ class App extends Component {
         return arr[index];
       }
     });
+
+    if(this.state.sort == 'importance'){
+      if(this.state.resort == 'importance'){
+        tasks.tasks.sort((a, b) => b.importance - a.importance);
+        this.state.resort = '';
+      }
+      else{
+        tasks.tasks.sort((a, b) => a.importance - b.importance);
+        this.state.resort = 'importance';
+      }
+    }
+
+
+    if(this.state.sort == 'date'){
+      if(this.state.resort == 'date'){
+        tasks.tasks.sort((a, b) =>  new Date(b.date) - new Date(a.date));
+        this.state.resort = '';
+      }
+      else{
+        tasks.tasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+        this.state.resort = 'date';
+        }
+    }
+
+    if(this.state.sort == 'name'){
+      if(this.state.resort == 'name'){
+        tasks.tasks.sort((a, b) => 
+        {
+          if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return -1;
+          }
+          if (a.name.toLowerCase() < b.name.toLowerCase()) {
+            return 1;
+          }
+          return 0;
+        });
+        this.state.resort = '';
+      }
+      else{
+        tasks.tasks.sort((a, b) => 
+          {
+            if (a.name.toLowerCase() < b.name.toLowerCase()) {
+              return -1;
+            }
+            if (a.name.toLowerCase() > b.name.toLowerCase()) {
+              return 1;
+            }
+            return 0;
+          });
+          
+        this.state.resort = 'name';
+        }
+    }
+
+    if(this.state.sort == 'date-create'){
+      if(this.state.resort == 'date-create'){
+        tasks.tasks.sort((a, b) =>  new Date(b.dateCreate) - new Date(a.dateCreate));
+        this.state.resort = '';
+      }
+      else{
+        tasks.tasks.sort((a, b) => new Date(a.dateCreate) - new Date(b.dateCreate));
+        this.state.resort = 'date-create';
+        }
+    }
 
     return (
       <div class="container-fluid">
@@ -130,10 +197,10 @@ class App extends Component {
           <div class="dropdown" onClick = {this.handleClick}>
             <button class="dropbtn">Сортировка</button>
             <div class="dropdown-content">
-              <a href="#">Важность</a>
-              <a href="#">Дата выполнения</a>
-              <a href="#">По алфавиту</a>
-              <a href="#">По дате создания</a>
+              <a href="#" onClick={(event) => this.setState({ sort: 'importance' })}>Важность</a>
+              <a href="#" onClick={(event) => this.setState({ sort: 'date' })}>Дата выполнения</a>
+              <a href="#" onClick={(event) => this.setState({ sort: 'name' })}>По алфавиту</a>
+              <a href="#" onClick={(event) => this.setState({ sort: 'date-create' })}>По дате создания</a>
             </div>
           </div>
         </div>
