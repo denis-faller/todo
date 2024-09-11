@@ -4,7 +4,7 @@ import $ from 'jquery';
 
 export class AddTaskButton extends React.Component {
   onBtnClick = (e) => {
-    this.props.addTask($(".task").val());
+    this.props.addTask($(".task").val(), this.props.date.toISOString().slice(0, 10), this.props.notificationDate);
   };
   render() {
     return (

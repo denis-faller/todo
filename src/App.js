@@ -12,20 +12,74 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+    let currentDate = new Date();
+    let notificationDate = new Date();
+    notificationDate.setHours(16);
+    notificationDate.setMinutes(0);
+    notificationDate.setSeconds(0);
     this.state = {
       importance: false,
       sort: '',
       resort: '',
+      date: currentDate,
+      notificationDate: notificationDate,
     };
+  }
+
+  alertTaskName = (taskName) => {
+    alert( taskName);
   }
 
 
   handleClick = (e) => {
     e.currentTarget.classList.add("active");
   }
+
+
+  setDate = (event) => {
+    let currentDate = new Date();
+    if( event.target.text == "Сегодня"){
+      this.setState({ date: currentDate });
+    }
+    if( event.target.text == "Завтра"){
+      currentDate.setDate((new Date()).getDate() + 1 );
+      this.setState({ date: currentDate});
+    }
+    if( event.target.text == "Следующая неделя"){
+      currentDate.setDate((new Date()).getDate() + 7 );
+      this.setState({ date: currentDate});
+    }
+  }
+
+
+  setNotificationDate = (event) => {
+    let notificationDate = new Date();
+    if( event.target.text == "Позднее сегодня 16:00"){
+      notificationDate.setHours(16);
+      notificationDate.setMinutes(0);
+      notificationDate.setSeconds(0);
+      this.setState({ notificationDate: notificationDate });
+    }
+    if( event.target.text == "Завтра, вс 19:00"){
+      notificationDate.setDate((new Date()).getDate() + 1 );
+      notificationDate.setHours(19);
+      notificationDate.setMinutes(0);
+      notificationDate.setSeconds(0);
+      this.setState({ notificationDate: notificationDate});
+    }
+    if( event.target.text == "Следующая неделя, пн 19:00"){
+      notificationDate.setDate((new Date()).getDate() + 7 );
+      notificationDate.setHours(19);
+      notificationDate.setMinutes(0);
+      notificationDate.setSeconds(0);
+      this.setState({ notificationDate: notificationDate});
+    }
+  }
+  
   
   render() {
     let { tasks, addTaskAction, changeEndTaskAction, changeImportanceTaskAction } = this.props;
+
 
     if(tasks.tasks.lenght == undefined){
       if(localStorage.getItem('tasks') != null){
@@ -119,6 +173,21 @@ class App extends Component {
         }
     }
 
+    // localStorage.clear();
+    for(var i = 1; i < 1000; i++) {
+      clearTimeout(i);
+    }
+    tasks.tasks.map((el, index, arr) => {
+      if (el.dateNotification !== undefined) {
+        if(el.dateNotification - new Date().getTime() > 0){
+          setTimeout(() => {
+            this.alertTaskName(el.name);
+          }, el.dateNotification - new Date().getTime());
+        }
+      }
+      return el;
+    });
+    
     return (
       <div class="container-fluid">
       <h1>TODO-лист</h1>
@@ -138,6 +207,8 @@ class App extends Component {
           <CurrentDate></CurrentDate>
           <div>
           <AddTaskButton
+            notificationDate={this.state.notificationDate}
+            date={this.state.date}
             addTask={addTaskAction}
           />
           </div>
@@ -145,17 +216,17 @@ class App extends Component {
             <div class="dropdown" onClick = {this.handleClick}>
               <button class="dropbtn"><svg class="fluentIcon dateButton-icon ___12fm75w f1w7gpdv fez10in fg4l7m0" fill="currentColor" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M7 11a1 1 0 100-2 1 1 0 000 2zm1 2a1 1 0 11-2 0 1 1 0 012 0zm2-2a1 1 0 100-2 1 1 0 000 2zm1 2a1 1 0 11-2 0 1 1 0 012 0zm2-2a1 1 0 100-2 1 1 0 000 2zm4-5.5A2.5 2.5 0 0014.5 3h-9A2.5 2.5 0 003 5.5v9A2.5 2.5 0 005.5 17h9a2.5 2.5 0 002.5-2.5v-9zM4 7h12v7.5c0 .83-.67 1.5-1.5 1.5h-9A1.5 1.5 0 014 14.5V7zm1.5-3h9c.83 0 1.5.67 1.5 1.5V6H4v-.5C4 4.67 4.67 4 5.5 4z" fill="currentColor"></path></svg></button>
               <div class="dropdown-content">
-                <a href="#">Сегодня</a>
-                <a href="#">Завтра</a>
-                <a href="#">Следующая неделя</a>
+                <a onClick={(event) => this.setDate(event)}>Сегодня</a>
+                <a onClick={(event) => this.setDate(event)}>Завтра</a>
+                <a onClick={(event) => this.setDate(event)}>Следующая неделя</a>
               </div>
             </div>
             <div class="dropdown" onClick = {this.handleClick}>
                 <button><svg class="fluentIcon reminderButton-icon ___12fm75w f1w7gpdv fez10in fg4l7m0" fill="currentColor" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a5.92 5.92 0 015.98 5.36l.02.22V11.4l.92 2.22a1 1 0 01.06.17l.01.08.01.13a1 1 0 01-.75.97l-.11.02L16 15h-3.5v.17a2.5 2.5 0 01-5 0V15H4a1 1 0 01-.26-.03l-.13-.04a1 1 0 01-.6-1.05l.02-.13.05-.13L4 11.4V7.57A5.9 5.9 0 0110 2zm1.5 13h-3v.15a1.5 1.5 0 001.36 1.34l.14.01c.78 0 1.42-.6 1.5-1.36V15zM10 3a4.9 4.9 0 00-4.98 4.38L5 7.6V11.5l-.04.2L4 14h12l-.96-2.3-.04-.2V7.61A4.9 4.9 0 0010 3z" fill="currentColor"></path></svg></button>
                 <div class="dropdown-content">
-                  <a href="#">Позднее сегодня 16:00</a>
-                  <a href="#">Завтра, вс 19:00</a>
-                  <a href="#">Следующая неделя, пн 19:00</a>
+                  <a onClick={(event) => this.setNotificationDate(event)}>Позднее сегодня 16:00</a>
+                  <a onClick={(event) => this.setNotificationDate(event)}>Завтра, вс 19:00</a>
+                  <a onClick={(event) => this.setNotificationDate(event)}>Следующая неделя, пн 19:00</a>
                 </div>
             </div>
             <div class="dropdown" onClick = {this.handleClick}>
@@ -217,7 +288,7 @@ const mapStateToProps = (store) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    addTaskAction: (task) => dispatch(addTask(task)),
+    addTaskAction: (task, date, dateNotification) => dispatch(addTask(task, date, dateNotification)),
     changeEndTaskAction: (id) => dispatch(changeEndTask(id)),
     changeImportanceTaskAction: (id) => dispatch(changeImportanceTask(id)),
   };
