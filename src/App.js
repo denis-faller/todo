@@ -8,6 +8,12 @@ import {GridCollapse} from './components/GridCollapse';
 import { addTask, changeEndTask, changeImportanceTask } from './actions/TaskActions';
 
 
+function getWeekDay(date) {
+  let days = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
+
+  return days[date.getDay()];
+}
+
 class App extends Component {
 
   constructor(props) {
@@ -17,12 +23,18 @@ class App extends Component {
     notificationDate.setHours(16);
     notificationDate.setMinutes(0);
     notificationDate.setSeconds(0);
+    let repeatDate = new Date();
+    repeatDate.setHours(16);
+    notificationDate.setMinutes(0);
+    repeatDate.setSeconds(0);
     this.state = {
       importance: false,
       sort: '',
       resort: '',
       date: currentDate,
       notificationDate: notificationDate,
+      repeatDate: repeatDate,
+      repeat: 'everyday',
     };
   }
 
@@ -74,6 +86,37 @@ class App extends Component {
       notificationDate.setSeconds(0);
       this.setState({ notificationDate: notificationDate});
     }
+  }
+
+  setRepeatDate = (event, hour) => {
+    let repeatDate = new Date();
+    if( event.target.text == "Ежедневно"){
+      repeatDate.setDate((new Date()).getDate() + 1 );
+      this.setState({ repeat: 'everyday'});
+    }
+    if( event.target.text == "Рабочие дни"){
+      if(getWeekDay(new Date()) == "ПТ"){
+        repeatDate.setDate((new Date()).getDate() + 3 );
+      }
+      else if(getWeekDay(new Date()) == "СБ"){
+        repeatDate.setDate((new Date()).getDate() + 2 );
+      }
+      else{
+        repeatDate.setDate((new Date()).getDate() + 1 );
+      }
+      this.setState({ repeat: 'workday'});
+    }
+    if( event.target.text == "Еженедельно"){
+
+      repeatDate.setDate((new Date()).getDate() + 7 );
+
+      this.setState({ repeat: 'everyweek'});
+    }
+    
+    repeatDate.setHours(hour);
+    repeatDate.setMinutes(0);
+    repeatDate.setSeconds(0);
+    this.setState({ repeatDate: repeatDate});
   }
   
   
@@ -185,6 +228,52 @@ class App extends Component {
           }, el.dateNotification - new Date().getTime());
         }
       }
+
+      let dateRepeat = el.repeatDate;
+      dateRepeat = new Date(dateRepeat);
+      el.repeatDate = dateRepeat;
+      let dateNotification = new Date(el.dateNotification);
+      let hour = dateNotification.getHours();
+
+      if(el.repeat == 'everyday'){
+        if(el.repeatDate.getTime() - new Date().getTime() > 0){
+          setTimeout(() => {
+            this.alertTaskName(el.name);
+            tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 1 );
+            localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
+          }, el.repeatDate.getTime() - new Date().getTime());
+        }
+      }
+      if(el.repeat == 'workday'){
+        if(el.repeatDate.getTime() - new Date().getTime() > 0){
+          setTimeout(() => {
+            this.alertTaskName(el.name);
+            if(getWeekDay(new Date()) == "ПТ"){
+              tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 3 );
+              localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
+            }
+            else if(getWeekDay(new Date()) == "СБ"){
+              tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 2 );
+              localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
+            }
+            else{
+              tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 1 );
+              localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
+            }
+          }, el.repeatDate.getTime() - new Date().getTime());
+        }
+      }
+      if(el.repeat == 'everyweek'){
+        if(el.repeatDate.getTime() - new Date().getTime() > 0){
+          setTimeout(() => {
+            this.alertTaskName(el.name);
+            tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 7 );
+            localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
+          }, el.repeatDate.getTime() - new Date().getTime());
+        }
+      }
+      
+      tasks.tasks[index].repeatDate.setHours(hour);
       return el;
     });
     
@@ -207,6 +296,8 @@ class App extends Component {
           <CurrentDate></CurrentDate>
           <div>
           <AddTaskButton
+            repeat={this.state.repeat}
+            repeatDate={this.state.repeatDate}
             notificationDate={this.state.notificationDate}
             date={this.state.date}
             addTask={addTaskAction}
@@ -232,9 +323,9 @@ class App extends Component {
             <div class="dropdown" onClick = {this.handleClick}>
               <button><svg class="fluentIcon recurringButton-icon ___12fm75w f1w7gpdv fez10in fg4l7m0" fill="currentColor" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M16.5 6.67a.5.5 0 01.3.1l.08.07.01.02A5 5 0 0113.22 15L13 15H6.7l1.65 1.65c.18.17.2.44.06.63l-.06.07a.5.5 0 01-.63.06l-.07-.06-2.5-2.5a.5.5 0 01-.06-.63l.06-.07 2.5-2.5a.5.5 0 01.76.63l-.06.07L6.72 14h.14L7 14h6a4 4 0 003.11-6.52.5.5 0 01.39-.81zm-4.85-4.02a.5.5 0 01.63-.06l.07.06 2.5 2.5.06.07a.5.5 0 010 .56l-.06.07-2.5 2.5-.07.06a.5.5 0 01-.56 0l-.07-.06-.06-.07a.5.5 0 010-.56l.06-.07L13.28 6h-.14L13 6H7a4 4 0 00-3.1 6.52c.06.09.1.2.1.31a.5.5 0 01-.9.3A4.99 4.99 0 016.77 5h6.52l-1.65-1.65-.06-.07a.5.5 0 01.06-.63z" fill="currentColor"></path></svg></button>
               <div class="dropdown-content">
-                  <a href="#">Ежедневно</a>
-                  <a href="#">Рабочие дни</a>
-                  <a href="#">Еженедельно</a>
+                  <a onClick={(event) => this.setRepeatDate(event, 16)}>Ежедневно</a>
+                  <a onClick={(event) => this.setRepeatDate(event, 19)}>Рабочие дни</a>
+                  <a onClick={(event) => this.setRepeatDate(event, 19)}>Еженедельно</a>
                 </div>
             </div>  
           </div>
@@ -288,7 +379,7 @@ const mapStateToProps = (store) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    addTaskAction: (task, date, dateNotification) => dispatch(addTask(task, date, dateNotification)),
+    addTaskAction: (task, date, dateNotification, repeatDate, repeat) => dispatch(addTask(task, date, dateNotification, repeatDate, repeat)),
     changeEndTaskAction: (id) => dispatch(changeEndTask(id)),
     changeImportanceTaskAction: (id) => dispatch(changeImportanceTask(id)),
   };

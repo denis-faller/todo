@@ -23,7 +23,16 @@
     switch (action.type) {
       case TASK_ADD_SUCCESS:
         if(action.payload != undefined){
-          tasks.push({id: state.id, end: false, name: action.payload.task, date: action.payload.date, importance: false, dateCreate: new Date(), dateNotification: Date.parse(action.payload.notificationDate)});
+          tasks.push({id: state.id, 
+            end: false, 
+            name: action.payload.task, 
+            date: action.payload.date, 
+            importance: false, 
+            dateCreate: new Date(),
+            dateNotification: Date.parse(action.payload.notificationDate),
+            repeatDate: Date.parse(action.payload.repeatDate), 
+            repeat: action.payload.repeat
+        });
           localStorage.setItem('tasks', JSON.stringify(tasks));
         }
         return {

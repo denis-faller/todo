@@ -7,7 +7,7 @@ export const TASK_CHANGE_END_FAIL = 'TASK_CHANGE_END_FAIL';
 export const TASK_CHANGE_IMPORTANCE_SUCCESS = 'TASK_CHANGE_IMPORTANCE_SUCCESS';
 export const TASK_CHANGE_IMPORTANCE_FAIL = 'TASK_CHANGE_IMPORTANCE_FAIL';
 
-export function addTask(task, date, notificationDate) {
+export function addTask(task, date, notificationDate, repeatDate, repeat) {
     return (dispatch) => {
         if(task != null){
             if(task.trim() == ""){
@@ -18,7 +18,7 @@ export function addTask(task, date, notificationDate) {
             else{
                 dispatch({
                 type: TASK_ADD_SUCCESS,
-                payload: {task: task.trim(), date: date, notificationDate: notificationDate},
+                payload: {task: task.trim(), date: date, notificationDate: notificationDate, repeatDate: repeatDate, repeat: repeat},
                 });
             }
         }
