@@ -4,7 +4,6 @@ import './App.css';
 import CurrentDate from './components/CurrentDate';
 import {AddTaskButton} from './components/AddTaskButton';
 import {Grid} from './components/Grid';
-import {GridCollapse} from './components/GridCollapse';
 import { addTask, changeEndTask, changeImportanceTask } from './actions/TaskActions';
 
 
@@ -344,11 +343,13 @@ class App extends Component {
               </div>
             </div>
             <Grid
+              collapse={false}
               tasks={tasks.tasks}
               changeEndTask={changeEndTaskAction}
               changeImportanceTask={changeImportanceTaskAction}
             />
-           <GridCollapse
+           <Grid
+              collapse={true}
               tasks={tasks.endTasks}
               changeEndTask={changeEndTaskAction}
               changeImportanceTask={changeImportanceTaskAction}
