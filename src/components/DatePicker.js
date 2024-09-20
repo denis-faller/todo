@@ -10,31 +10,16 @@ const DatePickerComponent = (props) => {
     const changeDateTask = (event, id) => {
         const newDate = event.target.value;
         setDateTask(newDate); // Обновляем состояние
-    
-        if(props.end){
-            let tasks = JSON.parse(localStorage.getItem('endTasks'));
-    
-            tasks.filter(function (el, index, ar) {
-              if(ar[index].id == id){
-                  ar[index].date = event.target.value;
-              }
-              return ar[index];
-            });
-      
-            localStorage.setItem('endTasks', JSON.stringify(tasks));
+        let tasks = JSON.parse(localStorage.getItem('tasks'));
+
+        tasks.filter(function (el, index, ar) {
+        if(ar[index].id == id){
+            ar[index].date = event.target.value;
         }
-        else{
-          let tasks = JSON.parse(localStorage.getItem('tasks'));
-    
-          tasks.filter(function (el, index, ar) {
-            if(ar[index].id == id){
-                ar[index].date = event.target.value;
-            }
-            return ar[index];
-          });
-    
-          localStorage.setItem('tasks', JSON.stringify(tasks));
-        }
+        return ar[index];
+        });
+
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     };
 
     let task = props.task;

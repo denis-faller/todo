@@ -120,18 +120,17 @@ class App extends Component {
   
   
   render() {
+    // localStorage.clear();
     let { tasks, addTaskAction, changeEndTaskAction, changeImportanceTaskAction } = this.props;
 
 
     if(tasks.tasks.lenght == undefined){
       if(localStorage.getItem('tasks') != null){
         tasks.tasks = JSON.parse(localStorage.getItem('tasks'));
-        if(localStorage.getItem('endTasks') != null){
-          tasks.endTasks = JSON.parse(localStorage.getItem('endTasks'));
-        }
-        else{
-          tasks.endTasks = null;
-        }
+        tasks.endTasks = tasks.tasks.filter(function(el, index, arr){
+          if(el.end == 1)
+            return arr[index];
+        });
         tasks.tasks = tasks.tasks.filter(function(el, index, arr){
           if(el.end == 0)
             return arr[index];
@@ -215,7 +214,6 @@ class App extends Component {
         }
     }
 
-    // localStorage.clear();
     for(var i = 1; i < 1000; i++) {
       clearTimeout(i);
     }
@@ -374,8 +372,7 @@ class App extends Component {
 }
 const mapStateToProps = (store) => {
   return {
-    tasks: store.tasks,
-    endTasks: store.endTasks,
+    tasks: store.tasks
   };
 };
 const mapDispatchToProps = (dispatch) => {

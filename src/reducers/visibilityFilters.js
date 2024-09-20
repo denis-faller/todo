@@ -1,4 +1,4 @@
-import { VisibilityFilters } from '../actions';
+import { VisibilityFilters } from '../actions/VisibilityActions';
 
 const importanceFilter = (
   state = VisibilityFilters.SHOW_ALL,

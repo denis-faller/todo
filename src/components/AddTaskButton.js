@@ -15,8 +15,3 @@ export class AddTaskButton extends React.Component {
     );
   }
 }
-
-AddTaskButton.propTypes = {
-  task: PropTypes.string.isRequired,
-  addTask: PropTypes.func.isRequired,
-};

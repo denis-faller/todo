@@ -9,14 +9,13 @@
   
   export const initialState = {
     tasks: [],
-    endTasks: [],
     id: Number(localStorage.getItem('taskId')) || 0,
   };
   
   export function taskReducer(state = initialState, action) {
 
     let tasks = state.tasks;
-    let endTasks = state.endTasks;
+    let endTasks = [];
     state.id += 1;
     localStorage.setItem('taskId', state.id);
 
@@ -46,6 +45,8 @@
         };
 
         case TASK_CHANGE_END_SUCCESS:
+          tasks = tasks.concat(state.endTasks);
+
           tasks = tasks.map(function(element, index, array) {
             if(array[index].id === action.payload){
               if(array[index].end){
@@ -59,12 +60,14 @@
           });
 
 
-          let tempTasks = [];
 
-          if(localStorage.getItem('endTasks') != null){
-            endTasks = JSON.parse(localStorage.getItem('endTasks'));
+          if(localStorage.getItem('tasks') != null){
+            endTasks = tasks.filter(function(el, index, arr){
+              if(el.end == 1)
+                return arr[index];
+            });
             if(endTasks != undefined){
-                endTasks = endTasks.map(function(element, index, array) {
+              endTasks = endTasks.map(function(element, index, array) {
                 if(array[index].id === action.payload){
                   if(array[index].end){
                     array[index].end = false;
@@ -75,22 +78,6 @@
                 }
                 return array[index];
               });
-  
-            tempTasks = endTasks.filter(function(element, index, array) {
-              if(!array[index].end){
-                return array[index];
-              }
-              
-          });
-
-          let endTasksTemp = tasks.filter(function(element, index, array) {
-            if(array[index].end){
-              return array[index];
-            }
-          });
-
-          endTasks = endTasks.concat(endTasksTemp);
-
           }
         }
         else{
@@ -102,29 +89,15 @@
         }
 
 
-          tasks = tasks.filter(function(element, index, array) {
-            if(!array[index].end){
-              return array[index];
-            }
-        });
-
-
-            endTasks = endTasks.filter(function(element, index, array) {
-              if(array[index].end){
+        endTasks = endTasks.filter(function(element, index, array) {
+              if(!array[index].end){
+                array[index].end = !array[index].end;
+                return !array[index];
+              }
+              else{
                 return array[index];
               }
           });
-
-          if(endTasks.length != 0){
-            tasks.endTasks = endTasks;
-            localStorage.setItem('endTasks', JSON.stringify(endTasks));
-          }
-          else{
-            tasks.endTasks = null;
-            localStorage.removeItem('endTasks');
-          }
-
-          tasks = tasks.concat(tempTasks);
         
           localStorage.setItem('tasks', JSON.stringify(tasks));
 
@@ -139,6 +112,8 @@
           };
       
           case TASK_CHANGE_IMPORTANCE_SUCCESS:
+            tasks = tasks.concat(state.endTasks);
+
             tasks = tasks.map(function(element, index, array) {
               if(array[index].id === action.payload){
                 if(array[index].importance){
@@ -150,26 +125,9 @@
               }
               return array[index];
             });
-          
+
+
             localStorage.setItem('tasks', JSON.stringify(tasks));
-
-
-            if(localStorage.getItem('endTasks') != undefined){
-              endTasks = JSON.parse(localStorage.getItem('endTasks'));
-              endTasks = endTasks.map(function(element, index, array) {
-                if(array[index].id === action.payload){
-                  if(array[index].importance){
-                    array[index].importance = false;
-                  }
-                  else{
-                    array[index].importance = true;
-                  }
-                }
-                return array[index];
-              });
-            
-              localStorage.setItem('endTasks', JSON.stringify(endTasks));
-          }
 
   
             return {
