@@ -1,7 +1,7 @@
-import { VisibilityFilters } from '../actions/VisibilityActions';
+import { ImportanceFilters } from '../actions/ImportanceActions';
 
 const importanceFilter = (
-  state = VisibilityFilters.SHOW_ALL,
+  state = ImportanceFilters.SHOW_ALL,
   action
 ) => {
   switch (action.type) {
@@ -12,4 +12,4 @@ const importanceFilter = (
   }
 };
 
-export default visibilityFilter;
+export default importanceFilter;

@@ -5,6 +5,8 @@ import CurrentDate from './components/CurrentDate';
 import {AddTaskButton} from './components/AddTaskButton';
 import {Grid} from './components/Grid';
 import { addTask, changeEndTask, changeImportanceTask } from './actions/TaskActions';
+import { ImportanceFilters } from './actions/ImportanceActions';
+import FilterLink from './containers/FilterLink';
 
 
 function getWeekDay(date) {
@@ -12,6 +14,22 @@ function getWeekDay(date) {
 
   return days[date.getDay()];
 }
+
+
+function getVisibleTodos(tasks, filter) {
+  if(tasks.tasks.length != 0){
+    switch (filter) {
+      case ImportanceFilters.SHOW_ALL:
+        return { ...tasks, tasks: [...tasks.tasks] };
+      case ImportanceFilters.SHOW_IMPORTANCE:
+        return { ...tasks, tasks: tasks.tasks.filter((t) => t.importance) };
+    }
+  }
+  else{
+    return tasks;
+  }
+};
+
 
 class App extends Component {
 
@@ -27,7 +45,6 @@ class App extends Component {
     notificationDate.setMinutes(0);
     repeatDate.setSeconds(0);
     this.state = {
-      importance: false,
       sort: '',
       resort: '',
       date: currentDate,
@@ -124,7 +141,7 @@ class App extends Component {
     let { tasks, addTaskAction, changeEndTaskAction, changeImportanceTaskAction } = this.props;
 
 
-    if(tasks.tasks.lenght == undefined){
+    if(tasks.tasks.length == 0){
       if(localStorage.getItem('tasks') != null){
         tasks.tasks = JSON.parse(localStorage.getItem('tasks'));
         tasks.endTasks = tasks.tasks.filter(function(el, index, arr){
@@ -138,18 +155,6 @@ class App extends Component {
       }
     }
     
-    let importance = this.state.importance;
-    tasks.tasks = tasks.tasks.filter(function(el, index, arr){
-      if(importance){
-        if(el.importance == importance){
-          return arr[index];
-        }
-      }
-      else{
-        return arr[index];
-      }
-    });
-
     if(this.state.sort == 'importance'){
       if(this.state.resort == 'importance'){
         tasks.tasks.sort((a, b) => b.importance - a.importance);
@@ -280,11 +285,15 @@ class App extends Component {
       <div class="row">
         <div class="col listItem-1">
           <ul>
-            <li class = "listItem-inner-1 my-day" onClick={(event) => this.setState({ importance: false })}>
+            <li class = "listItem-inner-1 my-day">
+            <FilterLink filter={ImportanceFilters.SHOW_ALL}>
               Мой день
+            </FilterLink>
             </li>
-            <li class = "listItem-inner-2 importance" onClick={(event) => this.setState({ importance: true })}>
+            <li class = "listItem-inner-2 importance">
+            <FilterLink filter={ImportanceFilters.SHOW_IMPORTANCE}>
               Важно
+            </FilterLink>
             </li>
           </ul>
         </div>
@@ -372,9 +381,13 @@ class App extends Component {
 }
 const mapStateToProps = (store) => {
   return {
-    tasks: store.tasks
+    tasks: getVisibleTodos(
+      store.tasks,
+      store.importanceFilter
+    ),
   };
 };
+
 const mapDispatchToProps = (dispatch) => {
   return {
     addTaskAction: (task, date, dateNotification, repeatDate, repeat) => dispatch(addTask(task, date, dateNotification, repeatDate, repeat)),

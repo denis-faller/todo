@@ -7,7 +7,7 @@ export const setVisibilityFilter = (filter) => ({
     filter,
   });
   
-  export const VisibilityFilters = {
+  export const ImportanceFilters = {
     SHOW_ALL: 'SHOW_ALL',
     SHOW_IMPORTANCE: 'SHOW_IMPORTANCE',
   };
