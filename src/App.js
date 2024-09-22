@@ -15,9 +15,8 @@ function getWeekDay(date) {
   return days[date.getDay()];
 }
 
-
 function getVisibleTodos(tasks, filter) {
-  if(tasks.tasks.length != 0){
+  if(tasks.tasks != null){
     switch (filter) {
       case ImportanceFilters.SHOW_ALL:
         return { ...tasks, tasks: [...tasks.tasks] };
@@ -29,7 +28,6 @@ function getVisibleTodos(tasks, filter) {
     return tasks;
   }
 };
-
 
 class App extends Component {
 
@@ -137,24 +135,25 @@ class App extends Component {
   
   
   render() {
+
+    
     // localStorage.clear();
     let { tasks, addTaskAction, changeEndTaskAction, changeImportanceTaskAction } = this.props;
 
-
-    if(tasks.tasks.length == 0){
-      if(localStorage.getItem('tasks') != null){
-        tasks.tasks = JSON.parse(localStorage.getItem('tasks'));
-        tasks.endTasks = tasks.tasks.filter(function(el, index, arr){
-          if(el.end == 1)
-            return arr[index];
-        });
-        tasks.tasks = tasks.tasks.filter(function(el, index, arr){
-          if(el.end == 0)
-            return arr[index];
-        });
+    if(this.props.tasks != undefined){
+      if(this.props.tasks.tasks == null){
+        tasks = this.state.tasks;
       }
+      tasks.endTasks = tasks.tasks.filter(function(el, index, arr){
+        if(el.end == 1)
+          return arr[index];
+      });
+      tasks.tasks = tasks.tasks.filter(function(el, index, arr){
+        if(el.end == 0)
+          return arr[index];
+      });
     }
-    
+
     if(this.state.sort == 'importance'){
       if(this.state.resort == 'importance'){
         tasks.tasks.sort((a, b) => b.importance - a.importance);
@@ -222,62 +221,65 @@ class App extends Component {
     for(var i = 1; i < 1000; i++) {
       clearTimeout(i);
     }
-    tasks.tasks.map((el, index, arr) => {
-      if (el.dateNotification !== undefined) {
-        if(el.dateNotification - new Date().getTime() > 0){
-          setTimeout(() => {
-            this.alertTaskName(el.name);
-          }, el.dateNotification - new Date().getTime());
-        }
-      }
 
-      let dateRepeat = el.repeatDate;
-      dateRepeat = new Date(dateRepeat);
-      el.repeatDate = dateRepeat;
-      let dateNotification = new Date(el.dateNotification);
-      let hour = dateNotification.getHours();
-
-      if(el.repeat == 'everyday'){
-        if(el.repeatDate.getTime() - new Date().getTime() > 0){
-          setTimeout(() => {
-            this.alertTaskName(el.name);
-            tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 1 );
-            localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
-          }, el.repeatDate.getTime() - new Date().getTime());
+    if(tasks.length != 0){
+      tasks.tasks.map((el, index, arr) => {
+        if (el.dateNotification !== undefined) {
+          if(el.dateNotification - new Date().getTime() > 0){
+            setTimeout(() => {
+              this.alertTaskName(el.name);
+            }, el.dateNotification - new Date().getTime());
+          }
         }
-      }
-      if(el.repeat == 'workday'){
-        if(el.repeatDate.getTime() - new Date().getTime() > 0){
-          setTimeout(() => {
-            this.alertTaskName(el.name);
-            if(getWeekDay(new Date()) == "ПТ"){
-              tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 3 );
-              localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
-            }
-            else if(getWeekDay(new Date()) == "СБ"){
-              tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 2 );
-              localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
-            }
-            else{
+
+        let dateRepeat = el.repeatDate;
+        dateRepeat = new Date(dateRepeat);
+        el.repeatDate = dateRepeat;
+        let dateNotification = new Date(el.dateNotification);
+        let hour = dateNotification.getHours();
+
+        if(el.repeat == 'everyday'){
+          if(el.repeatDate.getTime() - new Date().getTime() > 0){
+            setTimeout(() => {
+              this.alertTaskName(el.name);
               tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 1 );
               localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
-            }
-          }, el.repeatDate.getTime() - new Date().getTime());
+            }, el.repeatDate.getTime() - new Date().getTime());
+          }
         }
-      }
-      if(el.repeat == 'everyweek'){
-        if(el.repeatDate.getTime() - new Date().getTime() > 0){
-          setTimeout(() => {
-            this.alertTaskName(el.name);
-            tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 7 );
-            localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
-          }, el.repeatDate.getTime() - new Date().getTime());
+        if(el.repeat == 'workday'){
+          if(el.repeatDate.getTime() - new Date().getTime() > 0){
+            setTimeout(() => {
+              this.alertTaskName(el.name);
+              if(getWeekDay(new Date()) == "ПТ"){
+                tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 3 );
+                localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
+              }
+              else if(getWeekDay(new Date()) == "СБ"){
+                tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 2 );
+                localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
+              }
+              else{
+                tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 1 );
+                localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
+              }
+            }, el.repeatDate.getTime() - new Date().getTime());
+          }
         }
-      }
-      
-      tasks.tasks[index].repeatDate.setHours(hour);
-      return el;
-    });
+        if(el.repeat == 'everyweek'){
+          if(el.repeatDate.getTime() - new Date().getTime() > 0){
+            setTimeout(() => {
+              this.alertTaskName(el.name);
+              tasks.tasks[index].repeatDate.setDate((new Date()).getDate() + 7 );
+              localStorage.setItem('tasks', JSON.stringify(tasks.tasks));
+            }, el.repeatDate.getTime() - new Date().getTime());
+          }
+        }
+        
+        tasks.tasks[index].repeatDate.setHours(hour);
+        return el;
+      });
+    }
     
     return (
       <div class="container-fluid">
@@ -285,7 +287,7 @@ class App extends Component {
       <div class="row">
         <div class="col listItem-1">
           <ul>
-            <li class = "listItem-inner-1 my-day">
+            <li>
             <FilterLink filter={ImportanceFilters.SHOW_ALL}>
               Мой день
             </FilterLink>
@@ -387,7 +389,6 @@ const mapStateToProps = (store) => {
     ),
   };
 };
-
 const mapDispatchToProps = (dispatch) => {
   return {
     addTaskAction: (task, date, dateNotification, repeatDate, repeat) => dispatch(addTask(task, date, dateNotification, repeatDate, repeat)),
