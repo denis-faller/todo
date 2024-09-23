@@ -100,10 +100,6 @@ export class Grid extends React.Component {
             };
             const isNotCollapsed = !this.props.collapse;
 
-            if(!isNotCollapsed){
-                console.log("GRID");
-            }
-
             return (
                 <div class = "container">
                 {isNotCollapsed ? (
