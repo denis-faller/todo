@@ -7,7 +7,6 @@ import {Button, Collapse} from 'react-bootstrap'
 
 
 export class Grid extends React.Component {
-
     constructor(props) {
         super(props);
 
@@ -101,6 +100,10 @@ export class Grid extends React.Component {
             };
             const isNotCollapsed = !this.props.collapse;
 
+            if(!isNotCollapsed){
+                console.log("GRID");
+            }
+
             return (
                 <div class = "container">
                 {isNotCollapsed ? (
@@ -154,8 +157,7 @@ export class Grid extends React.Component {
                     <div><Button className="btn" onClick={() => this.setState({ open: !this.state.open })}>Завершенные</Button>
                     <Collapse in={this.state.open}>
                     <div>
-                        {
-                        this.props.tasks.map((task) => {  
+                        {this.props.tasks.map((task) => {  
                             let end = task.end ? 'checked' : '';
                             let visible1 = task.end ? 'css-8s785g img checked' : 'css-8s785g img checked visible';
                             let visible2 = task.end ? 'css-8s785g img not-checked visible' : 'css-8s785g img not-checked';
